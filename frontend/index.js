@@ -11,6 +11,19 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
 
   let mentors = [] // fix this
   let learners = [] // fix this
+  async function fetchDataConcurrently() {
+    const [responseA, responseB] = await Promise.all([
+      axios.get('https://api.example.com/endpointA'),
+      axios.get('https://api.example.com/endpointB')
+    ]);
+  
+    const dataA = responseA.data;
+    const dataB = responseB.data;
+  
+    console.log(dataA, dataB);
+  }
+  
+  fetchDataConcurrently();
 
   // 👆 ==================== TASK 1 END ====================== 👆
 
@@ -28,6 +41,19 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   //     "Grace Hopper"
   //   ]`
   // }
+
+learners = learners.map(learner => {
+ 
+  learner.mentors = learner.mentors.map(mentorId => {
+    
+    const mentor = mentors.find(mentor => mentor.id === mentorId);
+   
+    return mentor.fullName;
+  });
+  
+
+  return learner;
+});
 
   // 👆 ==================== TASK 2 END ====================== 👆
 
@@ -52,6 +78,23 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
     const email = document.createElement('div')
     const mentorsHeading = document.createElement('h4')
     const mentorsList = document.createElement('ul')
+
+
+const learnerDiv = document.createElement('div');
+learnerDiv.classList.add('learner');
+
+const learnerName = document.createElement('h2');
+learnerName.textContent = learner.fullName;
+learnerDiv.appendChild(learnerName);
+
+const mentorList = document.createElement('ul');
+learner.mentors.forEach(mentor => {
+  const mentorLi = document.createElement('li');
+  mentorLi.textContent = mentor;
+  mentorList.appendChild(mentorLi);
+});
+learnerDiv.appendChild(mentorList);
+
 
     // 👆 ==================== TASK 3 END ====================== 👆
 
