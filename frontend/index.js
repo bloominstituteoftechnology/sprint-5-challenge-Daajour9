@@ -9,29 +9,15 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   // ❗ Use the variables `mentors` and `learners` to store the data.
   // ❗ Use the await keyword when using axios.
 
-  let mentors = [] // fix this
-  let learners = [] // fix this
-  async function fetchDataConcurrently() {
-    const [responseA, responseB] = await Promise.all([
-      axios.get('https://api.example.com/endpointA'),
-      axios.get('https://api.example.com/endpointB')
-    ]);
-  
-    const dataA = responseA.data;
-    const dataB = responseB.data;
-  
-    console.log(dataA, dataB);
-  }
-  
-  fetchDataConcurrently();
-
-  // 👆 ==================== TASK 1 END ====================== 👆
-
-  // 👇 ==================== TASK 2 START ==================== 👇
-
-  // 🧠 Combine learners and mentors.
-  // ❗ At this point the learner objects only have the mentors' IDs.
-  // ❗ Fix the `learners` array so that each learner ends up with this exact structure:
+  let mentors = await axios.get("http://localhost:3003/api/mentors")
+  let learners = await axios.get("http://localhost:3003/api/learners")
+  let mentorsRes = mentors.data;
+  let learnersRes = learners.data;
+  // :point_up_2: ==================== TASK 1 END ====================== :point_up_2:
+  // :point_down: ==================== TASK 2 START ==================== :point_down:
+  // :brain: Combine learners and mentors.
+  // :exclamation: At this point the learner objects only have the mentors' IDs.
+  // :exclamation: Fix the `learners` array so that each learner ends up with this exact structure:
   // {
   //   id: 6,
   //   fullName: "Bob Johnson",
@@ -41,59 +27,67 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   //     "Grace Hopper"
   //   ]`
   // }
-
-learners = learners.map(learner => {
- 
-  learner.mentors = learner.mentors.map(mentorId => {
-    
-    const mentor = mentors.find(mentor => mentor.id === mentorId);
-   
-    return mentor.fullName;
-  });
-  
-
-  return learner;
-});
-
-  // 👆 ==================== TASK 2 END ====================== 👆
-
+  const formattedData = []
+  learnersRes.forEach(learner => {
+    const result = {
+      ...learner,
+      mentors: learner.mentors.map(mID => {
+        const mentor = mentorsRes.find(mentorObj => mentorObj.id == mID)
+        return mentor.firstName + " " + mentor.lastName
+      })
+    }
+    formattedData.push(result)
+  })
+  // :point_up_2: ==================== TASK 2 END ====================== :point_up_2:
   const cardsContainer = document.querySelector('.cards')
   const info = document.querySelector('.info')
   info.textContent = 'No learner is selected'
-
-
-  // 👇 ==================== TASK 3 START ==================== 👇
-
-  for (let learner of learners) { // looping over each learner object
-
-    // 🧠 Flesh out the elements that describe each learner
-    // ❗ Give the elements below their (initial) classes, textContent and proper nesting.
-    // ❗ Do not change the variable names, as the code that follows depends on those names.
-    // ❗ Also, loop over the mentors inside the learner object, creating an <li> element for each mentor.
-    // ❗ Fill each <li> with a mentor name, and append it to the <ul> mentorList.
-    // ❗ Inspect the mock site closely to understand what the initial texts and classes look like!
-
+  // :point_down: ==================== TASK 3 START ==================== :point_down:
+  formattedData.forEach(learner => { // looping over each learner object
+    // :brain: Flesh out the elements that describe each learner
+    // :exclamation: Give the elements below their (initial) classes, textContent and proper nesting.
+    // :exclamation: Do not change the variable names, as the code that follows depends on those names.
+    // :exclamation: Also, loop over the mentors inside the learner object, creating an <li> element for each mentor.
+    // :exclamation: Fill each <li> with a mentor name, and append it to the <ul> mentorList.
+    // :exclamation: Inspect the mock site closely to understand what the initial texts and classes look like!
     const card = document.createElement('div')
     const heading = document.createElement('h3')
     const email = document.createElement('div')
     const mentorsHeading = document.createElement('h4')
     const mentorsList = document.createElement('ul')
+    card.appendChild(heading)
+    card.appendChild(email)
+    card.appendChild(mentorsHeading)
+    learner.mentors.forEach(mentorName => {
+      const li = document.createElement('li')
+      li.textContent = mentorName
+      mentorsList.appendChild(li)
+    })
+    card.classList.add("card")
+    heading.textContent = learner.fullName
+    email.textContent = learner.email
+    mentorsHeading.textContent = "Mentors"
+    mentorsHeading.classList.add('closed')
 
 
-const learnerDiv = document.createElement('div');
-learnerDiv.classList.add('learner');
 
-const learnerName = document.createElement('h2');
-learnerName.textContent = learner.fullName;
-learnerDiv.appendChild(learnerName);
 
-const mentorList = document.createElement('ul');
-learner.mentors.forEach(mentor => {
-  const mentorLi = document.createElement('li');
-  mentorLi.textContent = mentor;
-  mentorList.appendChild(mentorLi);
-});
-learnerDiv.appendChild(mentorList);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // 👆 ==================== TASK 3 END ====================== 👆
@@ -141,7 +135,7 @@ learnerDiv.appendChild(mentorList);
       }
     })
   }
-
+  )
   const footer = document.querySelector('footer')
   const currentYear = new Date().getFullYear()
   footer.textContent = `© BLOOM INSTITUTE OF TECHNOLOGY ${currentYear}`
